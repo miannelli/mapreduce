@@ -1,0 +1,64 @@
+<html>
+  <head>
+    <script type="text/javascript" defer>
+      function sanitize(word) {
+        return word.replace(/\W+/g, "").toLowerCase()
+      }
+
+      function map() {
+        var words = document.body.innerHTML.split(/\s+/);
+        words.pop();
+        words.shift();
+        var agg = words.map(function(val) {
+            return [sanitize(val), 1];
+          });
+        emit('reduce', {"aggregate" : JSON.stringify(agg)});
+      }
+
+      function reduce() {
+        var docs = document.body.innerHTML.split(/\n/);
+        var hash = {};
+        for (var i in docs) {
+            var c = docs[i].split(/\s/);
+            if (c[0] in hash) {
+              hash[c[0]] += parseInt(c[1]);
+            }
+            else {
+              hash[c[0]] = parseInt(c[1]);
+            }
+        }
+        delete hash[""];
+        emit('partial', {'sum' : JSON.stringify(hash)})
+      }
+
+      //   // var docs = document.body.innerHTML.split(/\n/);
+      //   // var w = docs[0];
+      //   // var count = docs.length - 1;
+      //   // emit('partial', {'sum' : [w, count]});
+      // }
+
+      function emit(phase, data) {
+        var myForm=document.createElement("form");
+        myForm.method="POST";
+        myForm.action="/emit/"+phase;
+
+        for (var k in data) {
+          var myInput = document.createElement("input");
+          myInput.setAttribute("name", k);
+          myInput.setAttribute("value", data[k]);
+          myForm.appendChild(myInput);
+        }
+
+        document.body.appendChild(myForm);
+        myForm.submit();
+        document.body.removeChild(myForm);
+      }
+
+      window.onload = function(){ <%= "#{@execute}();" if @execute %> };
+    </script>
+  </head>
+
+  <body>
+    <%= yield %>
+  </body>
+</html>
