@@ -1,6 +1,2 @@
 <% @execute = "reduce" %>
-<% v = [] %>
-<% data.each do |a| %>
-   <% v.push a.join(' ') %>
-<%end %>
-<%= v.join("\n")%>
+<%= data ? data.join("\n") : "" %>

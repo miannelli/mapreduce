@@ -1,4 +1,4 @@
-<%= "{" + answer.sort.map{|k,v| "#{k.inspect}=>#{v.inspect}"}.join(", ") + "}" %>
+<%= "{" + answer.sort_by{|k,v| v}.reverse.map{|k,v| "#{k.inspect}=>#{v.inspect}"}.join(", ") + "}" %>
 
 <!-- Another client could be doing the final reduce, poll to see result -->
 <meta http-equiv="refresh" content="2" />

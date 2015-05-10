@@ -1,41 +1,37 @@
 <html>
   <head>
     <script type="text/javascript" defer>
-      function sanitize(word) {
-        return word.replace(/\W+/g, "").toLowerCase()
-      }
-
-      function map() {
+      function map() { //fix word1-word2
         var words = document.body.innerHTML.split(/\s+/);
-        words.pop();
-        words.shift();
-        var agg = words.map(function(val) {
-            return [sanitize(val), 1];
-          });
-        emit('reduce', {"aggregate" : JSON.stringify(agg)});
+        var aggregate = [];
+        for (var i in words) {
+          if (i > 0 && i < words.length - 1) {
+            aggregate.push([words[i].replace(/\W+/g, "").toLowerCase(), 1]);
+          }
+        }
+        emit("reduce", {"aggregate" : JSON.stringify(aggregate)});
       }
 
       function reduce() {
         var docs = document.body.innerHTML.split(/\n/);
-        var hash = {};
-        for (var i in docs) {
-            var c = docs[i].split(/\s/);
-            if (c[0] in hash) {
-              hash[c[0]] += parseInt(c[1]);
-            }
-            else {
-              hash[c[0]] = parseInt(c[1]);
-            }
+        var newArray = new Array();
+        for(var i = 0; i<docs.length; i++){
+          if (docs[i]){
+            newArray.push(docs[i]);
+          }
         }
-        delete hash[""];
-        emit('partial', {'sum' : JSON.stringify(hash)})
+        if (newArray[0].replace(/\s/g, '')) {
+          var h = {};
+          h[newArray[0]] = newArray.length - 2;
+          emit("partial", {"sum" : JSON.stringify(h) } );
+        }
+        else {
+          var myForm=document.createElement("form");
+          myForm.method="GET";
+          myForm.action="/";
+          myForm.submit(); 
+        }
       }
-
-      //   // var docs = document.body.innerHTML.split(/\n/);
-      //   // var w = docs[0];
-      //   // var count = docs.length - 1;
-      //   // emit('partial', {'sum' : [w, count]});
-      // }
 
       function emit(phase, data) {
         var myForm=document.createElement("form");
