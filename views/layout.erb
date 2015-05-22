@@ -1,35 +1,29 @@
 <html>
   <head>
-    <script type="text/javascript" defer>
-      function map() { //fix word1-word2
-        var words = document.body.innerHTML.split(/\s+/);
-        var aggregate = [];
-        for (var i in words) {
-          if (i > 0 && i < words.length - 1) {
-            aggregate.push([words[i].replace(/\W+/g, "").toLowerCase(), 1]);
-          }
-        }
-        emit("reduce", {"aggregate" : JSON.stringify(aggregate)});
+    <script>
+      function emptyPoll() {
+        var myForm=document.createElement("form");
+        myForm.method="GET";
+        myForm.action="/";
+        document.body.appendChild(myForm);
+        myForm.submit();
+        document.body.removeChild(myForm);
       }
-
-      function reduce() {
-        var docs = document.body.innerHTML.split(/\n/);
-        var newArray = new Array();
-        for(var i = 0; i<docs.length; i++){
-          if (docs[i]){
-            newArray.push(docs[i]);
+      
+      function handler() {
+        try {
+          var rawData = document.body.textContent.split(' !#!#!# ');
+          eval("var jobFunc =" + rawData[1] + ";");
+          var result = jobFunc(rawData[0]);
+          if (result) {
+            emit(rawData[2], { job : JSON.stringify(result) });
           }
-        }
-        if (newArray[0].replace(/\s/g, '')) {
-          var h = {};
-          h[newArray[0]] = newArray.length - 2;
-          emit("partial", {"sum" : JSON.stringify(h) } );
-        }
-        else {
-          var myForm=document.createElement("form");
-          myForm.method="GET";
-          myForm.action="/";
-          myForm.submit(); 
+          else {
+            emptyPoll();
+          }
+        } 
+        catch(err) {
+          emptyPoll();
         }
       }
 
@@ -50,7 +44,7 @@
         document.body.removeChild(myForm);
       }
 
-      window.onload = function(){ <%= "#{@execute}();" if @execute %> };
+      window.onload = function () { <%= "handler();" if @execute %> };
     </script>
   </head>
 

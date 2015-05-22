@@ -1,0 +1,21 @@
+<form action="/form" method="post" enctype="multipart/form-data">
+  Paste Code for Map:<textarea name="map" rows="4" cols="50"></textarea><br><br>
+  Paste Code for Reduce: <textarea name="red" rows="4" cols="50"></textarea><br><br>
+  Upload Data Files: <input type="file" name="file[]" multiple><br><br>
+  <input type="submit" value="MapReduce!">
+</form>
+
+<h2>Notes and Tips</h2>
+<ul>
+  <li>Your map/reduce code must be Javascript! And even if valid code is supplied, we make no guarantees that it will run correctly; dynamic code evaluation is a tricky business!</li>
+  <li>This application supports the latest versions of Chrome, Firefox, and Safari (mobile versions included). We have not tested older versions of the aforementioned browsers, IE, Opera, or any other browsers--use them at your own risk. Note that Chrome seems to run this application smoothest, while Firefox seems to run the Javascript codes fastest.</li>
+  <li>Your browser will poll for unfinished reduce-jobs; so even if it seems like nothing is happening, please wait for at least 10 seconds! When all reducers return, final results will be displayed prettily in the webpage; we leave it to you to save this information in the manner that you see fit.</li>
+  <li>If a MapReduce is already in progress when you click the MapReduce! button, your input will be ignored, and you will be redirected to the current job-flow. Sorry, we only support one MapReduce at a time for now! Try your code again soon if this happens.</li>
+  <li>When you're ready, start your MapReduce and have as many people point their browsers to the server for maximum efficiency. Happy MapReducing!</li>
+</ul>
+
+<h2>Example</h2>
+<p> We offer some tried and true code to take for a test run. This code is the map/reduce for generating a word-frequecy list for some specified document(s). Input-data should be in the form of a text file or files. Note that unusual formatting in your document may not be processed correctly as this is simple code. Note that the code is minified.</p>
+ <strong>Map - </strong> function(r){var e=[],a=r.split(/\s+/);for(var p in a)p>0&&e.push([a[p].replace(/\W+/g,"").toLowerCase(),1]);return e} 
+  <br>
+ <strong>Reduce - </strong>  function(r){for(var e=r.split(/\n/),n=new Array,t=0;t< e.length;t++)e[t]&&n.push(e[t]);if(n[0].replace(/\s/g,"")){var a={};return a[n[0]]=n.length-1,a}}

@@ -1,4 +1,40 @@
-<%= "{" + answer.sort_by{|k,v| v}.reverse.map{|k,v| "#{k.inspect}=>#{v.inspect}"}.join(", ") + "}" %>
+<%= answer.sort_by{|_key, value| value}.reverse.join("\n") %>
 
-<!-- Another client could be doing the final reduce, poll to see result -->
-<meta http-equiv="refresh" content="2" />
+<!-- other reduce-jobs may be running, poll every 2s for updates; after 10s assume everyone finished -->
+<!-- tested on latest versions of Chrome/Firefox -->
+<!-- see http://stackoverflow.com/questions/3665115/create-a-file-in-memory-for-user-to-download-not-through-server -->
+<script>
+    ;(function () {
+        var reloads = [2000, 2000, 2000, 2000, 2000],
+            storageKey = 'reloadIndex',
+            reloadIndex = parseInt(localStorage.getItem(storageKey), 10) || 0;
+
+        if (reloadIndex >= reloads.length || isNaN(reloadIndex)) {
+            localStorage.removeItem(storageKey);
+
+            var nth = 0;
+            var theData = document.body.textContent.split('\n\n\n')[0].replace(/^\s+|\s+$|    /g,'').replace(/\n/g, function (match, i, original) {
+                nth++;
+                return (nth % 2 == 1) ? ", " : "<br>";
+            });
+
+            var myForm=document.createElement("form");
+            myForm.method="POST";
+            myForm.action="/finishJob";
+            var myInput = document.createElement("input");
+            myInput.setAttribute("name", "theData");
+            myInput.setAttribute("value", theData);
+            myForm.appendChild(myInput);
+            document.body.appendChild(myForm);
+            myForm.submit();
+            document.body.removeChild(myForm);
+            return;
+        }
+
+        setTimeout(function(){
+            window.location.reload();
+        }, reloads[reloadIndex]);
+
+        localStorage.setItem(storageKey, parseInt(reloadIndex, 10) + 1);
+    }());
+</script>

@@ -1,0 +1,29 @@
+<!-- wait for a bit before re-polling if map-jobs not all done -->
+<!-- http://stackoverflow.com/questions/20314748/reload-page-2-times-with-ajax-javascript-and-settimeout -->
+<script>
+    ;(function () {
+        var reloads = [100], // how often the client should poll in ms
+            storageKey = 'reloadIndex',
+            reloadIndex = parseInt(localStorage.getItem(storageKey), 10) || 0;
+
+        if (reloadIndex >= reloads.length || isNaN(reloadIndex)) {
+            localStorage.removeItem(storageKey);
+
+            // submit a get '/' request 
+            var myForm=document.createElement("form");
+            myForm.method="GET";
+            myForm.action="/";
+            document.body.appendChild(myForm);
+            myForm.submit();
+            document.body.removeChild(myForm);
+            return;
+        }
+
+        // wait for specified time before re-polling
+        setTimeout(function(){
+            window.location.reload();
+        }, reloads[reloadIndex]);
+
+        localStorage.setItem(storageKey, parseInt(reloadIndex, 10) + 1);
+    }());
+</script>

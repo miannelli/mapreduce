@@ -1,2 +1,2 @@
 <% @execute = "reduce" %>
-<%= data ? data.join("\n") : "" %>
+<%= (data ? ([curr] + data).join("\n") : "") + ' !#!#!# ' + reducer + ' !#!#!# reduce' %>
