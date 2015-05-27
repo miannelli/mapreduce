@@ -134,7 +134,7 @@ get "/reduce/*" do
       :locals => {:curr => params[:splat].first, :data => settings.interm_results.delete(params[:splat].first), :reducer => settings.reducer}; 
 end
 
-get "/done"     do erb :done,  :locals => {:answer => settings.result}; end
+get "/done"     do erb :done, :locals => {:answer => settings.result}; end
 
 # reactions to client POST messages
 
